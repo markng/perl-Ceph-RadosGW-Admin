@@ -31,7 +31,7 @@ sub save {
     );
 }
 
-sub add_key {
+sub create_key {
     my ($self) = @_;
 	return $self->_request(
 		PUT          => 'user',
@@ -64,6 +64,14 @@ sub _request {
 		@args,
 		uid => $self->user_id,
 	);
+}
+
+sub as_hashref {
+    my ($self) = @_;
+    
+    return {
+	map { $_ => $self->$_ } qw/user_id display_name suspended max_buckets keys caps/
+    };
 }
 
 1;

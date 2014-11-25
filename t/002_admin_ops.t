@@ -26,8 +26,6 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 my ($access_key, $secret_key, $url) = get_auth_info();
 
 
-
-
 describe "A Rados Gateway Admin Client" => sub {
 	withVCR{	
 		it "should require connection arguments" => sub {
@@ -152,6 +150,16 @@ describe "A User" => sub {
 			$client->get_user(uid => 'test_user6');
 		};
 	};
+	it "should be able to give a hashref version of itself" => sub {
+		my $sut = $user->as_hashref;
+		cmp_deeply(
+			$sut,
+			superhashof({
+				user_id      => 'test_user6',
+				display_name => ignore(),
+			})
+		);
+	};
 	it "should be able to save changes" => sub {
 		$user->display_name('new display name');
 		$user->suspended(1);
@@ -170,7 +178,7 @@ describe "A User" => sub {
 		);
 	};
 	it "should be able to add a key" => sub {
-		my @sut = $user->add_key();
+		my @sut = $user->create_key();
 		cmp_deeply(
 			\@sut,
 			superbagof(
